@@ -1,0 +1,16 @@
+# Données personnelles et commerciales : JAMAIS dans Git (RGPD)
+*.xlsx
+*.xls
+*.pdf
+crm_extract*.txt
+crm_snippet.js
+config/*.csv
+!config/*.example.csv
+kreid_seed.csv
+ajustements.csv
+rapprochements_manuels.csv
+last_run.txt
+bx/
+__pycache__/
+.DS_Store
+.obsidian/
