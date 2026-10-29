@@ -10,6 +10,17 @@ _COLL = {'DE': 'De Temmerman', 'MATON': 'Maton', 'BOUIN': 'Bouin', 'MORGAN': 'Mo
 def _std(p):   # ancien format (9 champs) ou nouveau (11 champs avec nom / prénom)
     return p if len(p) == 11 else p[:3] + ['', ''] + p[3:9]
 _rows = [_std(p) for p in _rows if len(p) in (9, 11)]
+# extraction complète (favori « Lire le CRM ») : on ne garde que les fiches des leads suivis (fournisseurs + Kreid.fr)
+def _keys(ws, r0, col):
+    out = set()
+    for r in range(r0, ws.max_row + 1):
+        t = re.sub(r'\D', '', str(ws.cell(r, col).value or ''))
+        if t.startswith('33'): t = t[2:]
+        t = t.lstrip('0')[-9:]
+        if len(t) == 9: out.add(t)
+    return out
+_LEADKEYS = _keys(W, 3, 7) | _keys(Fz, 2, 10) | _keys(Q, 2, 6) | _keys(Kf, 2, 4)
+_rows = [p for p in _rows if any(t[-9:] in _LEADKEYS for t in p[2].split(',') if t)]
 for ref, coll, tel, nom, prenom, recep, simu, retour, depot, acc, refus in _rows:
   for key in [t[-9:] for t in tel.split(',') if t]:
     _cnt[key] = _cnt.get(key, 0) + 1

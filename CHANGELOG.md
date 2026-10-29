@@ -1,5 +1,11 @@
 # Évolution de l'agent
 
+## v1.2 — 29/10/2026
+- **L'agent n'ouvre plus jamais l'extranet du CRM.** Lecture par un favori Chrome « Lire le CRM Kreid », lancé à la main par Corentin ou Yohan depuis leur session (lecture seule, 1 page / 0,6 s), qui télécharge l'extraction ; dépôt dans `Suivi leads/Imports/CRM`, reprise automatique aux passages de 9h15 et 17h45.
+- Extraction complète filtrée par `build_base.py` (seules les fiches des leads suivis entrent dans le classeur).
+- Préparation du partage avec Corentin : classeur en lecture seule, dossier `Imports/` pour ses dépôts (CRM, exports Weendeal et Finanzen).
+- Qwamplify arrêté (onglet conservé pour l'historique).
+
 ## v1.1 — 28-29/10/2026
 - **MAF** : colonne « MAF financé » (montant MAF du bordereau Budgeo rattaché au lead), champ dans le TCD fournisseur, indicateurs « MAF financé » et « MAF par € de lead ».
 - **Kreid.fr, 4ᵉ source à coût 0** : onglet de saisie créé (base reconstituée depuis le formulaire du site + SUIVI-DISTANCE), ajout quotidien des nouvelles demandes depuis Outlook ; exclue du « Total payants ».

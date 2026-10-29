@@ -6,7 +6,7 @@ Dernière mise à jour de cette documentation : 28/10/2026
 
 ## Ce que fait l'agent (chaque jour ouvré)
 1. **Ajoute les nouveaux leads Kreid.fr** : mails « Demande d'informations depuis le site internet Kreid » (expéditeur WordPress) reçus depuis le dernier passage → nouvelles lignes en bas de l'onglet **Kreid.fr** (date, nom, prénom, téléphone, canal, prix 0). Doublon de téléphone = ignoré.
-2. **Lit le CRM** (extranet IOBSP, lecture seule) dans le Chrome de Yohan, via le script généré par `make_crm_snippet.py` : étapes datées des fiches dont le téléphone correspond à un lead (fournisseurs + Kreid.fr). Une page toutes les 0,6 s, aucune saisie, aucun mot de passe. **Étape suspendue tant que Yohan ne l'a pas réautorisée** (décision du 10/10/2026 : plus de requêtes automatisées sur l'extranet après un blocage de sécurité) : l'agent réutilise alors la dernière extraction. Pour réactiver : créer `_agent/crm_auto.txt` contenant OUI.
+2. **Prend l'extraction CRM la plus récente** (`crm_extract_AAAA-MM-JJ.txt`) déposée dans `Suivi leads/Imports/CRM` par Corentin ou Yohan avec le favori Chrome « Lire le CRM Kreid » (voir `Installer le favori CRM.html`). L'agent n'ouvre jamais l'extranet lui-même (décision du 10/10/2026). Lecture humaine, lecture seule, une page / 0,6 s ; le fichier contient toutes les fiches, `build_base.py` ne garde que celles des leads suivis.
 3. **Lit les bordereaux Budgeo** (PDF) de `Desktop/Pro/Administratif/Commission/Perçues/2026/Budgéo`.
 4. **Régénère le fichier** avec `run.sh` : `build.py` (onglets CRM, Bordereaux Budgeo, Base leads, Relances, Leads, Méthode) → recalcul LibreOffice (`tools/recalc.py`, 0 erreur exigée) → TCD (`inject_pivots.py`) → contrôles (total leads = lignes base).
 5. **Journalise** une ligne d'indicateurs agrégés dans `journal_runs.csv` (aucune donnée nominative) : c'est la courbe d'évolution publiée sur GitHub.
@@ -31,7 +31,8 @@ Les onglets **Weendeal, Finanzen, Qwamplify** ne sont jamais modifiés : ce sont
 ## Fichiers
 - `build.py`, `build_base.py` : construction du classeur (openpyxl).
 - `inject_pivots.py` : ajout des 4 TCD (cache vide + actualisation à l'ouverture, format natif Excel).
-- `make_crm_snippet.py` : génère le JavaScript d'extraction CRM avec les téléphones des leads.
+- `make_crm_bookmarklet.py` : génère `Installer le favori CRM.html` (favori de lecture du CRM, lancé à la main).
+- `make_crm_snippet.py` : ancienne extraction pilotée par l'agent (inutilisée depuis le 29/10/2026).
 - `run.sh` : chaîne complète. Usage : `bash run.sh <source.xlsx> <crm_extract.txt> <dossier_bordereaux> <sortie.xlsx>`
 - `kreid_seed.csv` : base initiale des leads du site (utilisée seulement si l'onglet Kreid.fr n'existe pas).
 - `ajustements.csv`, `rapprochements_manuels.csv` : corrections manuelles (à éditer avec Claude ou à la main, séparateur `;`).
@@ -47,3 +48,8 @@ Les onglets **Weendeal, Finanzen, Qwamplify** ne sont jamais modifiés : ce sont
 
 ## Dépôt GitHub
 Code, décisions et journal agrégé versionnés dans le dépôt privé MyFinances-Kreid/Kreid-Leads (sans aucune donnée personnelle : classeurs, bordereaux, extractions CRM, CSV de corrections et `kreid_seed.csv` restent ici).
+
+## Partage avec Corentin (29/10/2026)
+- Classeur partagé **en lecture seule** (il est réécrit à chaque passage de l'agent). Corentin voit tout le fichier, rentabilité comprise (décision Yohan).
+- Corentin dépose ses fichiers dans `Imports/` (droit de modification sur ce dossier seulement) : `Imports/CRM` (favori), `Imports/Weendeal` et `Imports/Finanzen` (exports des portails fournisseurs, intégration automatique à venir).
+- Qwamplify : achat arrêté pour le moment, onglet conservé pour l'historique.

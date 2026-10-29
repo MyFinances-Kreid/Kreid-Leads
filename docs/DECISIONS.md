@@ -10,6 +10,8 @@
 | Kreid.fr | Source à coût 0, référence pour juger les fournisseurs payants, exclue du total payants | Yohan, 28/10/2026 |
 | Période | Cohorte = mois d'achat / de réception du lead | 28/10/2026 |
 | Relances | Leads < 120 j : absent du CRM · contact sans simulation > 2 j · simulation sans retour > 10 j · dossier reçu non déposé > 7 j · dépôt sans décision > 15 j · accord non payé | 28/10/2026 |
-| CRM | Lecture seule, jamais de connexion à la place de Yohan. Requêtes automatisées suspendues tant que Yohan ne les réautorise pas (blocage de sécurité antérieur) | Yohan, 10/10/2026 |
+| CRM | Lecture seule ; l'agent n'ouvre jamais l'extranet (blocage de sécurité antérieur). Lecture déclenchée à la main via le favori « Lire le CRM Kreid » | Yohan, 10/10 puis 29/10/2026 |
+| Partage Corentin | Classeur en lecture seule, rentabilité visible ; dépôts dans `Imports/` | Yohan, 29/10/2026 |
+| Qwamplify | Achat arrêté pour le moment | Yohan, 29/10/2026 |
 | Diffusion | Onglet Relances sans origine des contacts (« clients ayant formulé une demande ») ; fichier = données personnelles, usage interne (RGPD) ; dépôt Git sans aucune donnée nominative | Yohan |
 | Onglets de saisie | Weendeal, Finanzen, Qwamplify jamais modifiés par l'agent ; Kreid.fr : ajout de lignes uniquement | 28/10/2026 |
