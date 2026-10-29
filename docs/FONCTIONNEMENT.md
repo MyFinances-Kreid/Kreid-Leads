@@ -9,7 +9,8 @@ Dernière mise à jour de cette documentation : 28/10/2026
 2. **Lit le CRM** (extranet IOBSP, lecture seule) dans le Chrome de Yohan, via le script généré par `make_crm_snippet.py` : étapes datées des fiches dont le téléphone correspond à un lead (fournisseurs + Kreid.fr). Une page toutes les 0,6 s, aucune saisie, aucun mot de passe. **Étape suspendue tant que Yohan ne l'a pas réautorisée** (décision du 10/10/2026 : plus de requêtes automatisées sur l'extranet après un blocage de sécurité) : l'agent réutilise alors la dernière extraction. Pour réactiver : créer `_agent/crm_auto.txt` contenant OUI.
 3. **Lit les bordereaux Budgeo** (PDF) de `Desktop/Pro/Administratif/Commission/Perçues/2026/Budgéo`.
 4. **Régénère le fichier** avec `run.sh` : `build.py` (onglets CRM, Bordereaux Budgeo, Base leads, Relances, Leads, Méthode) → recalcul LibreOffice (`tools/recalc.py`, 0 erreur exigée) → TCD (`inject_pivots.py`) → contrôles (total leads = lignes base).
-5. **Dépose** le fichier dans `Suivi leads/` (écrase la version précédente).
+5. **Journalise** une ligne d'indicateurs agrégés dans `journal_runs.csv` (aucune donnée nominative) : c'est la courbe d'évolution publiée sur GitHub.
+6. **Dépose** le fichier dans `Suivi leads/` (écrase la version précédente).
 
 Les onglets **Weendeal, Finanzen, Qwamplify** ne sont jamais modifiés : ce sont les onglets de saisie. L'onglet **Kreid.fr** est créé une fois (base reconstituée le 28/10/2026 : 36 demandes du formulaire + 2 leads « KREID » de SUIVI-DISTANCE, `kreid_seed.csv`), puis l'agent y ajoute seulement des lignes.
 
@@ -43,3 +44,6 @@ Les onglets **Weendeal, Finanzen, Qwamplify** ne sont jamais modifiés : ce sont
 - Les fiches CRM « faux contact / ne plus relancer » ne sont pas visibles dans la liste : elles peuvent apparaître en relance.
 - Excel affiche les TCD vides dans un aperçu (Finder, Outlook) : ils se remplissent à l'ouverture dans Excel.
 - Nouveau fournisseur : à ajouter dans `build_base.py`, `make_crm_snippet.py` et `inject_pivots.py` (avec Claude).
+
+## Dépôt GitHub
+Code, décisions et journal agrégé versionnés dans le dépôt privé MyFinances-Kreid/Kreid-Leads (sans aucune donnée personnelle : classeurs, bordereaux, extractions CRM, CSV de corrections et `kreid_seed.csv` restent ici).
