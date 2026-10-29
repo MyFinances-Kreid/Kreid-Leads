@@ -3,11 +3,11 @@ from openpyxl.styles import Font, PatternFill, Alignment, Border, Side
 from openpyxl.comments import Comment
 from openpyxl.utils import get_column_letter as L
 
-import sys, os, re, glob, subprocess, unicodedata, datetime as _dt
+import sys, os, re, csv, glob, subprocess, unicodedata, datetime as _dt
 SRC, CRM_TXT, BX_DIR, ADJ_CSV, OUT = sys.argv[1:6]
 TODAY = _dt.datetime.now().replace(hour=0, minute=0, second=0, microsecond=0)
 wb = openpyxl.load_workbook(SRC)
-for s in ('Rentabilité Qwamplify', 'Optimisation contacts', 'Leads', 'Relances', 'CRM', 'Bordereaux Budgeo', 'Base leads', 'Méthode & sources'):
+for s in ('Rentabilité Qwamplify', 'Optimisation contacts', 'Leads', 'Relances', 'CRM', 'Bordereaux Budgeo', 'Base leads', 'Méthode & sources', 'Journal imports'):
     if s in wb.sheetnames: del wb[s]
 
 NAVY, HEAD, GREEN, LIGHT, INPUT, GREY = '17365D', '1F4E78', '2E8B57', 'F3F6FA', 'FFF2CC', '666666'
@@ -146,11 +146,32 @@ for k, v in lines:
         M.row_dimensions[r].height = max(18, 14 * (len(v) // 95 + 1))
     r += 1
 
+# ---------- JOURNAL DES IMPORTS (traçabilité : _agent/journal_imports.csv, le plus récent en haut)
+J = wb.create_sheet('Journal imports')
+setup(J); J.sheet_properties.tabColor = GREY
+band(J, 1, 'JOURNAL DES IMPORTS — ce que chaque passage a lu, ajouté et vu changer',
+     "Exports Weendeal / Finanzen, extractions CRM : fichiers lus (empreinte), leads ajoutés, statuts portail, étapes CRM franchies · 2 000 derniers événements", 8)
+JH = ['Horodatage', 'Source', 'Fichier', 'Événement', 'Clé', 'Nom', 'Prénom', 'Détail']
+for c, t in enumerate(JH, 1):
+    x = J.cell(3, c, t); x.font = font(b=True, color='FFFFFF'); x.fill = fill(HEAD); x.border = box
+_jp = os.environ.get('JOURNAL_FOR_BUILD') or os.path.join(os.path.dirname(ADJ_CSV), 'journal_imports.csv')
+_jr = [l for l in csv.reader(open(_jp, encoding='utf-8'), delimiter=';')][1:] if os.path.exists(_jp) else []
+_COLORS = {'AJOUT_ONGLET': GREEN, 'SYNTHESE': NAVY, 'TELEPHONE_MANQUANT': 'C00000', 'FICHE_DISPARUE': 'C00000', 'DISPARU_EXPORT': 'C55A11',
+           'FICHIER_INCHANGE': 'C55A11', 'AUCUN_FICHIER': 'C00000', 'ETAPE_CRM': '1F4E78', 'NOUVELLE_FICHE_LEAD': GREEN}
+for i, v in enumerate(reversed(_jr[-2000:])):
+    for c, val in enumerate(v[:8], 1):
+        x = J.cell(4 + i, c, val); x.border = box
+        x.font = font(b=(v[3] == 'SYNTHESE'), color=_COLORS.get(v[3], '000000') if c in (4, 8) else '000000')
+for c, w in enumerate([16, 10, 30, 22, 12, 18, 14, 80], 1):
+    J.column_dimensions[L(c)].width = w
+J.freeze_panes = 'A4'
+J.auto_filter.ref = f'A3:H{3 + max(1, min(len(_jr), 2000))}'
+
 for _ws in wb.worksheets:
     _ws.oddFooter.center.text = FOOT; _ws.oddFooter.center.size = 7; _ws.oddFooter.center.font = None
     _ws.oddHeader.right.text = 'KREID · Pôle Distance'; _ws.oddHeader.right.size = 8; _ws.oddHeader.right.font = None
     _ws.oddFooter.center.color = None; _ws.oddHeader.right.color = None
-order = ['Leads', 'Relances', 'Weendeal', 'Finanzen', 'Qwamplify', 'Kreid.fr', 'CRM', 'Bordereaux Budgeo', 'Base leads', 'Méthode & sources']
+order = ['Leads', 'Relances', 'Weendeal', 'Finanzen', 'Qwamplify', 'Kreid.fr', 'CRM', 'Bordereaux Budgeo', 'Base leads', 'Journal imports', 'Méthode & sources']
 wb._sheets = [wb[n] for n in order]
 wb.active = 0
 for w in wb.worksheets: w.sheet_view.tabSelected = (w.title == 'Leads')

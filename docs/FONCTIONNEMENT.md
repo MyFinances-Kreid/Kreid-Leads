@@ -12,7 +12,7 @@ Dernière mise à jour de cette documentation : 28/10/2026
 5. **Journalise** une ligne d'indicateurs agrégés dans `journal_runs.csv` (aucune donnée nominative) : c'est la courbe d'évolution publiée sur GitHub.
 6. **Dépose** le fichier dans `Suivi leads/` (écrase la version précédente).
 
-Les onglets **Weendeal, Finanzen, Qwamplify** ne sont jamais modifiés : ce sont les onglets de saisie. L'onglet **Kreid.fr** est créé une fois (base reconstituée le 28/10/2026 : 36 demandes du formulaire + 2 leads « KREID » de SUIVI-DISTANCE, `kreid_seed.csv`), puis l'agent y ajoute seulement des lignes.
+Les onglets **Weendeal et Finanzen** sont alimentés par `import_exports.py` à partir des exports déposés dans `Imports/` : l'agent ajoute en bas les leads absents (clé e-mail pour Weendeal, téléphone pour Finanzen), sans jamais modifier une ligne existante. Qwamplify n'est plus touché. L'onglet **Kreid.fr** est créé une fois (base reconstituée le 28/10/2026 : 36 demandes du formulaire + 2 leads « KREID » de SUIVI-DISTANCE, `kreid_seed.csv`), puis l'agent y ajoute seulement des lignes.
 
 ## Règles de gestion (décisions)
 | Sujet | Règle | Décidé |
@@ -53,3 +53,10 @@ Code, décisions et journal agrégé versionnés dans le dépôt privé MyFinanc
 - Classeur partagé **en lecture seule** (il est réécrit à chaque passage de l'agent). Corentin voit tout le fichier, rentabilité comprise (décision Yohan).
 - Corentin dépose ses fichiers dans `Imports/` (droit de modification sur ce dossier seulement) : `Imports/CRM` (favori), `Imports/Weendeal` et `Imports/Finanzen` (exports des portails fournisseurs, intégration automatique à venir).
 - Qwamplify : achat arrêté pour le moment, onglet conservé pour l'historique.
+
+## Imports et traçabilité (29/10/2026)
+- `run.sh <classeur> - <bordereaux> <sortie> <dossier Imports>` : `import_exports.py` lit le dernier fichier de chaque sous-dossier d'`Imports/`, complète les onglets fournisseurs, choisit l'extraction CRM la plus récente, puis la génération habituelle tourne.
+- **Journal** : `_agent/journal_imports.csv` (une ligne par événement : fichier lu + empreinte, AJOUT_ONGLET, TELEPHONE_MANQUANT, STATUT_PORTAIL, DISPARU_EXPORT, NOUVELLE_FICHE_LEAD, ETAPE_CRM, FICHE_DISPARUE, FICHIER_INCHANGE, SYNTHESE). Recopié dans l'onglet « Journal imports » du classeur (le plus récent en haut).
+- **État de comparaison** : `_agent/etat_imports/` (dernier export de chaque source + dernière extraction CRM). Journal et état ne sont publiés que si tout le passage réussit.
+- **Weendeal** : exporter en **« CSV Codé »** (toutes les pages) pour avoir le téléphone. Avec le CSV simple, le téléphone est repris du CRM (même nom + prénom), sinon TELEPHONE_MANQUANT.
+- Données personnelles : journal et état restent dans OneDrive, jamais dans Git.

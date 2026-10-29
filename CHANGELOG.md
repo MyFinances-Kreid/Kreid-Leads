@@ -1,5 +1,10 @@
 # Évolution de l'agent
 
+## v1.3 — 29/10/2026
+- **Intégration des exports fournisseurs** (`import_exports.py`) : dernier fichier de `Imports/Weendeal` et `Imports/Finanzen`, ajout en bas des onglets des leads absents (clé e-mail / téléphone), jamais de modification d'une ligne existante ; téléphone Weendeal repris du CRM si l'export n'en a pas.
+- **Traçabilité** : `journal_imports.csv` (fichier lu + empreinte, ajouts, statuts portail, leads disparus, nouvelles fiches et étapes CRM franchies, fichiers inchangés, synthèses) + onglet « Journal imports » ; état de comparaison dans `etat_imports/`. Publiés seulement si tout le passage réussit.
+- `run.sh` : 5ᵉ argument = dossier Imports (choix automatique de l'extraction CRM la plus récente).
+
 ## v1.2 — 29/10/2026
 - **L'agent n'ouvre plus jamais l'extranet du CRM.** Lecture par un favori Chrome « Lire le CRM Kreid », lancé à la main par Corentin ou Yohan depuis leur session (lecture seule, 1 page / 0,6 s), qui télécharge l'extraction ; dépôt dans `Suivi leads/Imports/CRM`, reprise automatique aux passages de 9h15 et 17h45.
 - Extraction complète filtrée par `build_base.py` (seules les fiches des leads suivis entrent dans le classeur).
