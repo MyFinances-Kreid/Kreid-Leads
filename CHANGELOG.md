@@ -1,5 +1,9 @@
 # Évolution de l'agent
 
+## v1.3.1 — 18/11/2026
+- Conseillers Distance arrivés le 02/11 (Pasqualini, Grelin, Deleplanque) reconnus ; fiches des personnes sorties des effectifs affichées « À réattribuer (ex-…) » dans la base et les Relances.
+- Bordereau MY2026019 (04/11) intégré : 5 dossiers Finanzen rattachés.
+
 ## v1.3 — 29/10/2026
 - **Intégration des exports fournisseurs** (`import_exports.py`) : dernier fichier de `Imports/Weendeal` et `Imports/Finanzen`, ajout en bas des onglets des leads absents (clé e-mail / téléphone), jamais de modification d'une ligne existante ; téléphone Weendeal repris du CRM si l'export n'en a pas.
 - **Traçabilité** : `journal_imports.csv` (fichier lu + empreinte, ajouts, statuts portail, leads disparus, nouvelles fiches et étapes CRM franchies, fichiers inchangés, synthèses) + onglet « Journal imports » ; état de comparaison dans `etat_imports/`. Publiés seulement si tout le passage réussit.

@@ -6,7 +6,10 @@ def _d(s):
 _rows = [l.split(';') for l in open(CRM_TXT, encoding='utf-8').read().strip().split('\n')]
 _best = {}
 _cnt = {}
-_COLL = {'DE': 'De Temmerman', 'MATON': 'Maton', 'BOUIN': 'Bouin', 'MORGAN': 'Morgan', 'LAZARE': 'Lazare', 'PETYT': 'Petyt', 'BATON': 'Baton'}
+# code collaborateur du CRM -> nom affiché ; les personnes sorties des effectifs apparaissent « À réattribuer » pour que leurs fiches ne restent pas orphelines
+_COLL = {'DE': 'De Temmerman', 'MATON': 'Maton', 'MORGAN': 'Morgan', 'LAZARE': 'Lazare', 'PETYT': 'Petyt',
+         'PASQUALINI': 'Pasqualini', 'GRELIN': 'Grelin', 'DELEPLANQUE': 'Deleplanque',
+         'BOUIN': 'À réattribuer (ex-Bouin)', 'BATON': 'À réattribuer (ex-Baton)', 'STAQUET': 'À réattribuer (ex-Staquet)'}
 def _std(p):   # ancien format (9 champs) ou nouveau (11 champs avec nom / prénom)
     return p if len(p) == 11 else p[:3] + ['', ''] + p[3:9]
 _rows = [_std(p) for p in _rows if len(p) in (9, 11)]
