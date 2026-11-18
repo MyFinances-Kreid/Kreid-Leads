@@ -1,5 +1,10 @@
 # Évolution de l'agent
 
+## v1.4 — 18/11/2026
+- **Onglet « KPI Distance »** (`kpi.py`) : synthèse (taux lead → accord / payé vs cible 6 %, ROI, coût par dossier payé), entonnoir par source, délais médians entre étapes, tableau par conseiller, cohortes par mois d'achat (accords à 30/60/90 j), indicateurs back office (dépôt ≤ 2 j, dossiers non déposés, accords non payés, leads absents du CRM).
+- **Favori CRM enrichi** : montant simulé, date de paiement, CP, type de fiche (format 15 champs, compatible avec les anciens).
+- Exports Weendeal / Finanzen du 18/11 intégrés (+39 / +37 leads), bordereau MY2026019.
+
 ## v1.3.1 — 18/11/2026
 - Conseillers Distance arrivés le 02/11 (Pasqualini, Grelin, Deleplanque) reconnus ; fiches des personnes sorties des effectifs affichées « À réattribuer (ex-…) » dans la base et les Relances.
 - Bordereau MY2026019 (04/11) intégré : 5 dossiers Finanzen rattachés.

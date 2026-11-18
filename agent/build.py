@@ -7,7 +7,7 @@ import sys, os, re, csv, glob, subprocess, unicodedata, datetime as _dt
 SRC, CRM_TXT, BX_DIR, ADJ_CSV, OUT = sys.argv[1:6]
 TODAY = _dt.datetime.now().replace(hour=0, minute=0, second=0, microsecond=0)
 wb = openpyxl.load_workbook(SRC)
-for s in ('Rentabilité Qwamplify', 'Optimisation contacts', 'Leads', 'Relances', 'CRM', 'Bordereaux Budgeo', 'Base leads', 'Méthode & sources', 'Journal imports'):
+for s in ('Rentabilité Qwamplify', 'Optimisation contacts', 'Leads', 'Relances', 'CRM', 'Bordereaux Budgeo', 'Base leads', 'Méthode & sources', 'Journal imports', 'KPI Distance'):
     if s in wb.sheetnames: del wb[s]
 
 NAVY, HEAD, GREEN, LIGHT, INPUT, GREY = '17365D', '1F4E78', '2E8B57', 'F3F6FA', 'FFF2CC', '666666'
@@ -61,6 +61,7 @@ if 'Kreid.fr' not in wb.sheetnames:   # 1re création : leads du site connus au 
 Kf = wb['Kreid.fr']
 
 exec(open(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'build_base.py'), encoding='utf-8').read())
+exec(open(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'kpi.py'), encoding='utf-8').read())
 
 # ---------- LEADS (TCD)
 S = wb.create_sheet('Leads', index=3)
@@ -171,7 +172,7 @@ for _ws in wb.worksheets:
     _ws.oddFooter.center.text = FOOT; _ws.oddFooter.center.size = 7; _ws.oddFooter.center.font = None
     _ws.oddHeader.right.text = 'KREID · Pôle Distance'; _ws.oddHeader.right.size = 8; _ws.oddHeader.right.font = None
     _ws.oddFooter.center.color = None; _ws.oddHeader.right.color = None
-order = ['Leads', 'Relances', 'Weendeal', 'Finanzen', 'Qwamplify', 'Kreid.fr', 'CRM', 'Bordereaux Budgeo', 'Base leads', 'Journal imports', 'Méthode & sources']
+order = ['Leads', 'KPI Distance', 'Relances', 'Weendeal', 'Finanzen', 'Qwamplify', 'Kreid.fr', 'CRM', 'Bordereaux Budgeo', 'Base leads', 'Journal imports', 'Méthode & sources']
 wb._sheets = [wb[n] for n in order]
 wb.active = 0
 for w in wb.worksheets: w.sheet_view.tabSelected = (w.title == 'Leads')

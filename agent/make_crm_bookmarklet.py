@@ -13,7 +13,7 @@ async function page(n){const r=await fetch('/moduleapp/choix_apporteur.asp?PageN
  const t=[...d.querySelectorAll('table')].find(t=>t.textContent.includes('Réception contact'));if(!t)return;
  [...t.querySelectorAll('tr')].slice(1).forEach(tr=>{const td=[...tr.children];if(td.length<21)return;const c=td.map(x=>x.textContent.trim().replace(/;/g,','));
   const keys=[...td[11].childNodes].map(x=>x.textContent.replace(/\D/g,'')).filter(Boolean).map(s=>{s=s.startsWith('33')?s.slice(2):s;return s.replace(/^0+/,'').slice(-9);}).filter(s=>s.length==9);
-  if(keys.length)rows.push([c[1],(c[3]||'').split(' ')[0],keys.join(','),c[5],c[6],c[13],c[14].slice(0,10),c[16].slice(0,10),c[17].slice(0,10),c[18].slice(0,10),c[20].slice(0,10)].join(';'));});}
+  if(keys.length)rows.push([c[1],(c[3]||'').split(' ')[0],keys.join(','),c[5],c[6],c[13],c[14].slice(0,10),c[16].slice(0,10),c[17].slice(0,10),c[18].slice(0,10),c[20].slice(0,10),c[15].replace(/[^0-9]/g,''),c[19].slice(0,10),c[7],c[2]].join(';'));});}
 try{await page(1);for(let p=2;p<=pages;p++){document.title='CRM '+p+'/'+pages;await new Promise(r=>setTimeout(r,600));await page(p);}}
 catch(e){document.title=T0;alert('Session extranet expirée : reconnecte-toi puis relance le favori.');return;}
 document.title=T0;
@@ -31,7 +31,7 @@ li{{margin:8px 0}}.n{{color:#666;font-size:13px}}</style></head><body>
 <li><b>Chaque jour, avant 9h15</b> (et si possible avant 17h45) : ouvre l'extranet IOBSP, connecte-toi, va sur la liste des contacts, clique sur le favori.</li>
 <li>Laisse l'onglet ouvert environ 1 minute (le titre de l'onglet affiche « CRM 12/62 »…).</li>
 <li>Enregistre le fichier proposé (<code>crm_extract_AAAA-MM-JJ.txt</code>) dans <b>OneDrive › Pôle distance › Suivi leads › Imports › CRM</b>.</li></ol>
-<p class="n">Lecture seule : le favori ne modifie rien dans le CRM, ne saisit aucun mot de passe et lit une page toutes les 0,6 s.
+<p class="n">Champs lus : réf., collaborateur, téléphones, nom, prénom, étapes datées (réception → refus), montant simulé, date de paiement, CP, type de fiche. Lecture seule : le favori ne modifie rien dans le CRM, ne saisit aucun mot de passe et lit une page toutes les 0,6 s.
 Le fichier contient des données personnelles : il reste dans OneDrive (usage interne, RGPD).</p></body></html>"""
 out = sys.argv[1] if len(sys.argv) > 1 else '.'
 open(os.path.join(out, 'Installer le favori CRM.html'), 'w', encoding='utf-8').write(html)

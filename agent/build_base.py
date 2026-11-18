@@ -10,9 +10,10 @@ _cnt = {}
 _COLL = {'DE': 'De Temmerman', 'MATON': 'Maton', 'MORGAN': 'Morgan', 'LAZARE': 'Lazare', 'PETYT': 'Petyt',
          'PASQUALINI': 'Pasqualini', 'GRELIN': 'Grelin', 'DELEPLANQUE': 'Deleplanque',
          'BOUIN': 'À réattribuer (ex-Bouin)', 'BATON': 'À réattribuer (ex-Baton)', 'STAQUET': 'À réattribuer (ex-Staquet)'}
-def _std(p):   # ancien format (9 champs) ou nouveau (11 champs avec nom / prénom)
-    return p if len(p) == 11 else p[:3] + ['', ''] + p[3:9]
-_rows = [_std(p) for p in _rows if len(p) in (9, 11)]
+def _std(p):   # formats : 9 champs (v0), 11 (nom/prénom), 15 (+ montant simulé, payé, CP, type C/D)
+    if len(p) == 9: p = p[:3] + ['', ''] + p[3:9]
+    return p + [''] * (15 - len(p))
+_rows = [_std(p) for p in _rows if len(p) in (9, 11, 15)]
 # extraction complète (favori « Lire le CRM ») : on ne garde que les fiches des leads suivis (fournisseurs + Kreid.fr)
 def _keys(ws, r0, col):
     out = set()
@@ -24,19 +25,25 @@ def _keys(ws, r0, col):
     return out
 _LEADKEYS = _keys(W, 3, 7) | _keys(Fz, 2, 10) | _keys(Q, 2, 6) | _keys(Kf, 2, 4)
 _rows = [p for p in _rows if any(t[-9:] in _LEADKEYS for t in p[2].split(',') if t)]
-for ref, coll, tel, nom, prenom, recep, simu, retour, depot, acc, refus in _rows:
+def _eur(x):
+    x = re.sub(r'[^0-9,.-]', '', str(x or '')).replace(',', '.')
+    try: return float(x) if x else None
+    except ValueError: return None
+_EXTRA = {}   # clé -> (montant simulé, payé le, CP, type) de la fiche retenue
+for ref, coll, tel, nom, prenom, recep, simu, retour, depot, acc, refus, mts, paye, cp, typ in _rows:
   for key in [t[-9:] for t in tel.split(',') if t]:
     _cnt[key] = _cnt.get(key, 0) + 1
     score = (5 if acc else 4 if depot else 3 if retour else 2 if simu else 1, _d(recep) or _dt.datetime(2000, 1, 1))
     if key not in _best or score > _best[key][0]:
         _best[key] = (score, [key, ref, _COLL.get(coll, coll.title()), nom.title(), prenom.title(), _d(recep), _d(simu), _d(retour), _d(depot), _d(acc),
                               (_d(refus) or (refus.strip() + '…' if refus.strip() else None))])
+        _EXTRA[key] = (_eur(mts), _d(paye), cp or None, typ or None)
 C = wb.create_sheet('CRM')
 setup(C); C.sheet_properties.tabColor = HEAD
 band(C, 1, 'CRM — extraction des fiches leads (extranet IOBSP, lecture seule)',
      "Extraction du " + TODAY.strftime('%d/%m/%Y') + " par l'agent · 1 ligne = 1 téléphone (fiche la plus avancée si doublon) · ne rien saisir ici", 11)
 CH = ['Clé téléphone', 'Réf. CRM', 'Collaborateur', 'Nom', 'Prénom', 'Réception contact', 'Simulation envoyée', 'Retour dossier',
-      'Dépôt banque', 'Dossier accepté', 'Refus (date ou motif)', 'Nb fiches CRM', 'Extrait le']
+      'Dépôt banque', 'Dossier accepté', 'Refus (date ou motif)', 'Nb fiches CRM', 'Extrait le', 'Montant simulé (€)', 'Payé le (CRM)', 'CP', 'Type']
 for c, t in enumerate(CH, 1):
     x = C.cell(3, c, t); x.font = font(b=True, color='FFFFFF'); x.fill = fill(HEAD); x.border = box
     x.alignment = Alignment(horizontal='center', vertical='center', wrap_text=True)
@@ -44,16 +51,17 @@ C.row_dimensions[3].height = 30
 EXTRACT = TODAY
 for i, (key, (_, v)) in enumerate(sorted(_best.items(), key=lambda kv: kv[1][1][5] or _dt.datetime(2000, 1, 1), reverse=True)):
     r = 4 + i
-    for c, val in enumerate(v + [_cnt[key], EXTRACT], 1):
+    for c, val in enumerate(v + [_cnt[key], EXTRACT] + list(_EXTRA.get(key, (None,) * 4)), 1):
         x = C.cell(r, c, val); x.font = font(); x.border = box
         if isinstance(val, _dt.datetime): x.number_format = 'dd/mm/yyyy'
-        if c == 1: x.number_format = '@'
+        if c in (1, 16): x.number_format = '@'
+        if c == 14: x.number_format = '#,##0 €'
         x.alignment = Alignment(horizontal='center')
 CRM_LAST = 4 + len(_best) + 400   # marge pour les prochaines extractions
-for c, w in enumerate([13, 11, 15, 18, 15, 13, 13, 13, 13, 13, 18, 9, 11], 1):
+for c, w in enumerate([13, 11, 15, 18, 15, 13, 13, 13, 13, 13, 18, 9, 11, 13, 12, 8, 6], 1):
     C.column_dimensions[L(c)].width = w
 C.freeze_panes = 'B4'
-C.auto_filter.ref = f'A3:M{3 + len(_best)}'
+C.auto_filter.ref = f'A3:Q{3 + len(_best)}'
 C.cell(3, 1).comment = Comment("Téléphone sur 9 chiffres (sans le 0) : clé de rapprochement avec les onglets fournisseurs.", 'Claude')
 
 

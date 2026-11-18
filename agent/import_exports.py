@@ -104,7 +104,7 @@ fallback = sorted(glob.glob(os.path.join(AGENT, 'crm_extract_*.txt')))
 crm_use = crm_file
 if fallback and (not crm_file or os.path.basename(fallback[-1]) > os.path.basename(crm_file)):
     crm_use = fallback[-1]
-CRM_ROWS = [l.split(';') for l in open(crm_use, encoding='utf-8').read().strip().split('\n') if l.count(';') == 10]
+CRM_ROWS = [l.split(';') for l in open(crm_use, encoding='utf-8').read().strip().split('\n') if l.count(';') in (10, 14)]
 CRM_BYNAME = {}
 for p in CRM_ROWS:
     nk = namekey(p[3], p[4])
@@ -260,7 +260,7 @@ else:
     if not os.path.exists(prev_path) and len(fallback) and fallback[-1] != crm_use:
         prev_path = fallback[-1]   # 1re fois : base = dernière extraction de l'agent
     if os.path.exists(prev_path):
-        old = crm_state([l.split(';') for l in open(prev_path, encoding='utf-8').read().strip().split('\n') if l.count(';') == 10], KEYS)
+        old = crm_state([l.split(';') for l in open(prev_path, encoding='utf-8').read().strip().split('\n') if l.count(';') in (10, 14)], KEYS)
         new = crm_state(CRM_ROWS, KEYS)
         n_new = n_mv = 0
         for k, v in new.items():
