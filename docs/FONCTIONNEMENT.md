@@ -60,3 +60,6 @@ Code, décisions et journal agrégé versionnés dans le dépôt privé MyFinanc
 - **État de comparaison** : `_agent/etat_imports/` (dernier export de chaque source + dernière extraction CRM). Journal et état ne sont publiés que si tout le passage réussit.
 - **Weendeal** : exporter en **« CSV Codé »** (toutes les pages) pour avoir le téléphone. Avec le CSV simple, le téléphone est repris du CRM (même nom + prénom), sinon TELEPHONE_MANQUANT.
 - Données personnelles : journal et état restent dans OneDrive, jamais dans Git.
+
+## Couplage avec Kreid Pilotage (22/11/2026)
+Le classeur est lu par Kreid Pilotage (`connecteurs/leads/charger_leads.py`, `make leads` dans ~/Dev/Kreid-Pilotage) : chaque lead devient une ligne `lead_entrant`, rapprochée d'un dossier CRM par téléphone ; les dossiers sans origine reçoivent le canal LEAD. Écran Acquisition › « Leads achetés et entrants ». Ne pas renommer les onglets Weendeal / Finanzen / Qwamplify / Kreid.fr ni déplacer leurs colonnes sans mettre à jour le connecteur.

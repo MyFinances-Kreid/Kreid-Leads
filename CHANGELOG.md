@@ -1,5 +1,8 @@
 # Évolution de l'agent
 
+## v1.4.1 — 22/11/2026
+- Couplage avec Kreid Pilotage : le classeur alimente la table `lead_entrant` du dashboard (connecteur `leads/charger_leads.py` du dépôt Kreid-Pilotage, branche `feat/couplage-leads`). Structure des onglets fournisseurs figée (documentée dans FONCTIONNEMENT.md).
+
 ## v1.4 — 18/11/2026
 - **Onglet « KPI Distance »** (`kpi.py`) : synthèse (taux lead → accord / payé vs cible 6 %, ROI, coût par dossier payé), entonnoir par source, délais médians entre étapes, tableau par conseiller, cohortes par mois d'achat (accords à 30/60/90 j), indicateurs back office (dépôt ≤ 2 j, dossiers non déposés, accords non payés, leads absents du CRM).
 - **Favori CRM enrichi** : montant simulé, date de paiement, CP, type de fiche (format 15 champs, compatible avec les anciens).
